@@ -1,0 +1,53 @@
+{
+  "entities": {
+    "Grade": {
+      "title": "Grade",
+      "description": "An academic grade for a specific subject.",
+      "type": "object",
+      "properties": {
+        "subject": { "type": "string", "description": "The name of the subject." },
+        "grade": { "type": "string", "description": "The grade received (e.g., A, 95%)." },
+        "date": { "type": "string", "format": "date", "description": "The date the grade was recorded." },
+        "uid": { "type": "string", "description": "The user ID of the owner." }
+      },
+      "required": ["subject", "grade", "date", "uid"]
+    },
+    "Achievement": {
+      "title": "Achievement",
+      "description": "A personal or academic milestone.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "The title of the achievement." },
+        "description": { "type": "string", "description": "A brief description of the achievement." },
+        "date": { "type": "string", "format": "date", "description": "The date of the achievement." },
+        "uid": { "type": "string", "description": "The user ID of the owner." }
+      },
+      "required": ["title", "date", "uid"]
+    },
+    "DiaryEntry": {
+      "title": "Diary Entry",
+      "description": "A personal daily log of experiences.",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string", "description": "The content of the diary entry." },
+        "date": { "type": "string", "format": "date-time", "description": "The timestamp of the entry." },
+        "uid": { "type": "string", "description": "The user ID of the owner." }
+      },
+      "required": ["content", "date", "uid"]
+    }
+  },
+  "firestore": {
+    "/grades/{gradeId}": {
+      "schema": "Grade",
+      "description": "Collection of academic grades."
+    },
+    "/achievements/{achievementId}": {
+      "schema": "Achievement",
+      "description": "Collection of personal achievements."
+    },
+    "/diary_entries/{entryId}": {
+      "schema": "DiaryEntry",
+      "description": "Collection of private diary entries."
+    }
+  }
+}
