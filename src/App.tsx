@@ -76,11 +76,23 @@ const Navbar = ({ user }: { user: User | null }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const [loginError, setLoginError] = useState<string | null>(null);
+
   const handleLogin = async () => {
+    setLoginError(null);
     try {
       await signInWithPopup(auth, googleProvider);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login failed", error);
+      let message = "Login failed. Please try again.";
+      if (error.code === 'auth/unauthorized-domain') {
+        message = "This domain is not authorized in Firebase. Please add " + window.location.hostname + " to your Firebase Authorized Domains.";
+      } else if (error.code === 'auth/popup-blocked') {
+        message = "Login popup was blocked by your browser. Please allow popups for this site.";
+      } else if (error.message) {
+        message = error.message;
+      }
+      setLoginError(message);
     }
   };
 
@@ -102,43 +114,65 @@ const Navbar = ({ user }: { user: User | null }) => {
   ];
 
   return (
-    <nav className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4",
-      scrolled ? "bg-white/90 backdrop-blur-md shadow-sm py-3" : "bg-transparent"
-    )}>
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link to="/" className="font-serif text-xl font-bold tracking-tighter flex items-center gap-2">
-          <Activity className="text-accent" size={24} />
-          <span>SurgeonPath<span className="text-accent">.</span></span>
-        </Link>
-        <div className="hidden md:flex gap-8 items-center">
-          {navLinks.map((link) => (
-            <Link 
-              key={link.name} 
-              to={link.path}
-              className={cn(
-                "text-sm font-medium transition-colors",
-                location.pathname === link.path ? "text-accent" : "text-muted hover:text-accent"
-              )}
-            >
-              {link.name}
-            </Link>
-          ))}
-          {user ? (
-            <div className="flex items-center gap-4 ml-4 pl-4 border-l border-zinc-200">
-              <img src={user.photoURL || ''} className="w-8 h-8 rounded-full border border-accent/20" alt="User" />
-              <button onClick={handleLogout} className="text-sm font-medium text-muted hover:text-red-600 transition-colors flex items-center gap-2">
-                <LogOut size={16} /> Logout
+    <>
+      <nav className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4",
+        scrolled ? "bg-white/90 backdrop-blur-md shadow-sm py-3" : "bg-transparent"
+      )}>
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <Link to="/" className="font-serif text-xl font-bold tracking-tighter flex items-center gap-2">
+            <Activity className="text-accent" size={24} />
+            <span>SurgeonPath<span className="text-accent">.</span></span>
+          </Link>
+          <div className="hidden md:flex gap-8 items-center">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.name} 
+                to={link.path}
+                className={cn(
+                  "text-sm font-medium transition-colors",
+                  location.pathname === link.path ? "text-accent" : "text-muted hover:text-accent"
+                )}
+              >
+                {link.name}
+              </Link>
+            ))}
+            {user ? (
+              <div className="flex items-center gap-4 ml-4 pl-4 border-l border-zinc-200">
+                <img src={user.photoURL || ''} className="w-8 h-8 rounded-full border border-accent/20" alt="User" />
+                <button onClick={handleLogout} className="text-sm font-medium text-muted hover:text-red-600 transition-colors flex items-center gap-2">
+                  <LogOut size={16} /> Logout
+                </button>
+              </div>
+            ) : (
+              <button onClick={handleLogin} className="px-6 py-2 bg-accent text-white rounded-full text-sm font-medium hover:bg-accent/90 transition-colors flex items-center gap-2">
+                <LogIn size={16} /> Login
+              </button>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      <AnimatePresence>
+        {loginError && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-20 left-1/2 -translate-x-1/2 z-[60] w-full max-w-md px-4"
+          >
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl shadow-lg flex items-start gap-3">
+              <div className="flex-1 text-sm font-medium">
+                {loginError}
+              </div>
+              <button onClick={() => setLoginError(null)} className="text-red-400 hover:text-red-600">
+                <X size={18} />
               </button>
             </div>
-          ) : (
-            <button onClick={handleLogin} className="px-6 py-2 bg-accent text-white rounded-full text-sm font-medium hover:bg-accent/90 transition-colors flex items-center gap-2">
-              <LogIn size={16} /> Login
-            </button>
-          )}
-        </div>
-      </div>
-    </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
