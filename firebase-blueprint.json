@@ -8,6 +8,9 @@
         "subject": { "type": "string", "description": "The name of the subject." },
         "grade": { "type": "string", "description": "The grade received (e.g., A, 95%)." },
         "date": { "type": "string", "format": "date", "description": "The date the grade was recorded." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the record was first created." },
+        "edited": { "type": "boolean", "description": "Whether the record has been edited." },
+        "lastEditedAt": { "type": "string", "format": "date-time", "description": "When the record was last edited." },
         "uid": { "type": "string", "description": "The user ID of the owner." }
       },
       "required": ["subject", "grade", "date", "uid"]
@@ -20,6 +23,9 @@
         "title": { "type": "string", "description": "The title of the achievement." },
         "description": { "type": "string", "description": "A brief description of the achievement." },
         "date": { "type": "string", "format": "date", "description": "The date of the achievement." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the record was first created." },
+        "edited": { "type": "boolean", "description": "Whether the record has been edited." },
+        "lastEditedAt": { "type": "string", "format": "date-time", "description": "When the record was last edited." },
         "uid": { "type": "string", "description": "The user ID of the owner." }
       },
       "required": ["title", "date", "uid"]
@@ -30,7 +36,10 @@
       "type": "object",
       "properties": {
         "content": { "type": "string", "description": "The content of the diary entry." },
-        "date": { "type": "string", "format": "date-time", "description": "The timestamp of the entry." },
+        "date": { "type": "string", "format": "date", "description": "The user-defined date of the entry." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the record was first created." },
+        "edited": { "type": "boolean", "description": "Whether the record has been edited." },
+        "lastEditedAt": { "type": "string", "format": "date-time", "description": "When the record was last edited." },
         "uid": { "type": "string", "description": "The user ID of the owner." }
       },
       "required": ["content", "date", "uid"]
